@@ -5,8 +5,9 @@ import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/mocks/EIP712Verifier.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
+import "./EsRNTToken.sol";
 
-// 质押挖矿合约
+// 质押挖矿合约 Staking Mining Contract
 // 用户随时可以质押项目方代币 RNT(自定义的ERC20) ，开始赚取项目方Token(esRNT)；
 // 可随时解押提取已质押的 RNT；
 // 可随时领取esRNT奖励，每质押1个RNT每天可奖励 1 esRNT;
@@ -18,7 +19,7 @@ contract StakingRewards is Ownable(msg.sender), EIP712Verifier {
     // RNT 代币合约地址
     IERC20 public rntToken;
     // esRNT 代币合约地址
-    IERC20 public esRntToken;
+    EsRNTToken public esRntToken;
 
     string private constant SIGNING_DOMAIN = "StakingRewards";
     string private constant SIGNATURE_VERSION = "1";
@@ -26,13 +27,14 @@ contract StakingRewards is Ownable(msg.sender), EIP712Verifier {
     // 每天奖励的esRNT数量
     uint256 public constant DAILY_REWARDS = 1e18;
 
-    // 质押奖励的结束时间
-    uint256 public endTimestamp;
+    struct StakeInfo {
+        uint256 stakedAmount;
+        uint256 lastUpdateTime;
+        uint256 unClaimed;
+    }
 
-    // 记录每个用户的最后质押时间
-    mapping(address => uint256) public lastStakedTime;
-    // 质押池
-    mapping(address => uint256) public staked;
+    mapping(address => StakeInfo) public staked;
+
     // 用户领取奖励
     mapping(address => uint256) public claimed;
 
@@ -41,29 +43,24 @@ contract StakingRewards is Ownable(msg.sender), EIP712Verifier {
         address _esRntToken
     ) EIP712(SIGNING_DOMAIN, SIGNATURE_VERSION) {
         require(_erc20 != address(0), "zero address");
+        require(_esRntToken != address(0), "zero address");
         rntToken = IERC20(_erc20);
-        esRntToken = IERC20(_esRntToken);
+        esRntToken = EsRNTToken(_esRntToken);
     }
 
     /**
      *
      * @param amount The amount of tokens to stake
-     * 质押前首先要 Approve 授权质押池合约
+     * Before staking, you must first Approve the staking pool contract
      * 2612 permit 签名
      * @dev Stake RNT tokens
      *
      */
-    function stake(uint256 amount) external {
+    function stake(uint256 amount) public {
         require(amount > 0, "Amount must be greater than zero");
-        // 更新用户的质押时间和数量
-        lastStakedTime[msg.sender] = block.timestamp;
-        staked[msg.sender] += amount;
 
-        endTimestamp = block.timestamp + 30 days;
-        // 计算用户的奖励
-        uint256 rewards = calculateRewards(lastStakedTime[msg.sender], amount);
-        // 领取奖励
-        claimed[msg.sender] += rewards;
+        _calculateRewards(msg.sender);
+        staked[msg.sender].stakedAmount += amount;
 
         // 10:00 Alice 10RNT
         // 转移RNT代币到合约地址
@@ -84,6 +81,7 @@ contract StakingRewards is Ownable(msg.sender), EIP712Verifier {
         );
 
         // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/cryptography/ECDSA.sol
+        // (uint8 v, bytes32 r, bytes32 s) = abi.decode(signature, (uint8, bytes32, bytes32));
         bytes32 r;
         bytes32 s;
         uint8 v;
@@ -96,7 +94,7 @@ contract StakingRewards is Ownable(msg.sender), EIP712Verifier {
             v := byte(0, mload(add(permit2612Signature, 0x60)))
         }
 
-        // 使用 IERC20Permit 的 permit 方法进行代币授权。
+        // 使用 IERC20Permit 的 permit 方法进行代币授权。 token.permit
         IERC20Permit(address(rntToken)).permit(
             msg.sender,
             address(this),
@@ -106,27 +104,22 @@ contract StakingRewards is Ownable(msg.sender), EIP712Verifier {
             r,
             s
         );
-
-        // 更新用户的质押时间和数量
-        lastStakedTime[msg.sender] = block.timestamp;
-        staked[msg.sender] += amount;
-
-        endTimestamp = block.timestamp + 30 days;
-        // 计算用户的奖励
-        uint256 rewards = calculateRewards(lastStakedTime[msg.sender], amount);
-        // 领取奖励
-        claimed[msg.sender] += rewards;
-
-        rntToken.transferFrom(msg.sender, address(this), amount);
-        emit Staked(msg.sender, amount);
+        stake(amount);
     }
 
     function unstake(uint256 amount) external {
-        require(staked[msg.sender] >= amount, "Insufficient staked amount");
-        // 更新用户的质押记录
-        staked[msg.sender] -= amount;
-        // 删除用户的质押时间记录
-        delete lastStakedTime[msg.sender];
+        require(amount > 0, "Amount must be greater than zero");
+
+        StakeInfo storage stakeInfo = staked[msg.sender];
+        require(stakeInfo.stakedAmount >= amount, "Insufficient staked amount");
+        require(
+            rntToken.balanceOf(address(this)) >= amount,
+            "Insufficient RNT balance"
+        );
+
+        _calculateRewards(msg.sender);
+        stakeInfo.stakedAmount -= amount;
+
         // 将RNT代币返回给用户
         rntToken.transfer(msg.sender, amount);
         emit Unstaked(msg.sender, amount);
@@ -134,49 +127,52 @@ contract StakingRewards is Ownable(msg.sender), EIP712Verifier {
 
     // 领取奖励
     function claim() external {
-        uint256 stakeTime = lastStakedTime[msg.sender];
-        require(stakeTime > 0, "No stake time recorded");
+        _calculateRewards(msg.sender);
+        StakeInfo storage stakeInfo = staked[msg.sender];
 
-        uint256 rewards = calculateRewards(stakeTime, staked[msg.sender]);
+        uint256 rewards = stakeInfo.unClaimed;
         require(rewards > 0, "No rewards to claim");
-        require(
-            esRntToken.transfer(msg.sender, rewards),
-            "Failed to transfer rewards"
-        );
 
-        // 更新已领取的奖励
-        claimed[msg.sender] += rewards;
+        stakeInfo.unClaimed = 0;
+        esRntToken.mint(msg.sender, rewards);
         emit RewardClaimed(msg.sender, rewards);
     }
 
-    // esRNT 兑换成 RNT
-    function redeem(uint256 amount) external {
-        require(block.timestamp >= endTimestamp, "Staking period not ended");
-        require(amount <= claimed[msg.sender], "Insufficient claimed rewards");
-        // 更新已领取的奖励
-        claimed[msg.sender] -= amount;
+    function getUnclaimedRewards(
+        address account
+    ) public view returns (uint256) {
+        // 从映射中获取质押信息
+        StakeInfo memory stakeInfo = staked[account];
 
-        // 将esRNT代币转给合约
-        esRntToken.transferFrom(msg.sender, address(this), amount);
+        // 计算自上次更新以来经过的天数
+        uint256 daysPassed = (block.timestamp - stakeInfo.lastUpdateTime) /
+            1 days;
 
-        // 将RNT代币返回给用户
-        rntToken.transfer(msg.sender, amount);
-        emit Redeemed(msg.sender, amount);
+        // 计算未领取的奖励
+        uint256 rewards = ((daysPassed * stakeInfo.stakedAmount) *
+            DAILY_REWARDS) / 1e18;
+
+        // 返回未领取的奖励加上之前未领取的奖励
+        return stakeInfo.unClaimed + rewards;
     }
 
-    // 计算奖励
-    function calculateRewards(
-        uint256 stakeTime,
-        uint256 stakedAmount
-    ) internal view returns (uint256) {
-        // 计算从质押时间到当前时间的天数
-        uint256 daysPassed = (block.timestamp - stakeTime) / 1 days;
-        // 计算总奖励
-        return (daysPassed * stakedAmount * DAILY_REWARDS) / 1e18;
+    function _calculateRewards(address stakedAccount) internal {
+        StakeInfo storage stakeInfo = staked[stakedAccount];
+        if (stakeInfo.lastUpdateTime == 0) {
+            stakeInfo.lastUpdateTime = block.timestamp;
+            return;
+        }
+
+        uint256 daysPassed = (block.timestamp - stakeInfo.lastUpdateTime) /
+            1 days;
+        stakeInfo.unClaimed +=
+            (daysPassed * stakeInfo.stakedAmount * DAILY_REWARDS) /
+            1e18;
+
+        stakeInfo.lastUpdateTime = block.timestamp;
     }
 
     event Staked(address indexed user, uint256 amount);
     event Unstaked(address indexed user, uint256 amount);
     event RewardClaimed(address indexed user, uint256 reward);
-    event Redeemed(address indexed user, uint256 amount);
 }

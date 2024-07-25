@@ -8,6 +8,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20FlashMint.sol";
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+
+import "./RNTToken.sol";
 
 contract EsRNTToken is
     ERC20,
@@ -17,22 +21,32 @@ contract EsRNTToken is
     ERC20Votes,
     ERC20FlashMint
 {
+    using SafeERC20 for IERC20;
+
+    IERC20 public _rntToken;
+
     // 存储每个地址的锁仓信息
     mapping(address => LockInfo) public lockInfo;
     struct LockInfo {
-        uint256 lockedAmount; // 锁仓的esRNT数量
-        uint256 releaseEnd; // 锁仓结束时间
+        address to;
+        uint256 amount;
+        uint256 timestamp;
     }
 
+    LockInfo[] public lockInfos;
+
     constructor(
-        address initialOwner
+        address initialOwner,
+        address rntTokenAddress
     )
         ERC20("esRNTToken", "esRNT")
         Ownable(initialOwner)
         ERC20Permit("esRNTToken")
-    {}
+    {
+        _rntToken = IERC20(rntTokenAddress);
+    }
 
-    function mint(address to, uint256 amount) public onlyOwner {
+    function mintToken(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);
     }
 
@@ -52,45 +66,15 @@ contract EsRNTToken is
         return super.nonces(owner);
     }
 
-    // 用户开始锁仓
-    function lock(uint256 amount, uint256 duration) external {
-        require(balanceOf(msg.sender) >= amount, "Insufficient balance");
-        _transfer(msg.sender, address(this), amount); // 将代币从用户转移到合约本身
-        lockInfo[msg.sender] = LockInfo({
-            lockedAmount: amount,
-            releaseEnd: block.timestamp + duration
-        });
-    }
+    function mint(address to, uint256 amount) public onlyOwner {
+        // 使用 SafeERC20 库确保 transferFrom 操作成功
+        // https://medium.com/@JohnnyTime/why-you-should-always-use-safeerc20-94f44aa852d8
+        _rntToken.safeTransferFrom(msg.sender, address(this), amount);
 
-    // 用户尝试释放锁仓的代币
-    function release() external {
-        LockInfo storage userLock = lockInfo[msg.sender];
-        require(
-            userLock.releaseEnd <= block.timestamp,
-            "Lock period not ended"
-        );
+        // 调用内部函数进行铸造
+        _mint(to, amount);
 
-        uint256 releasableAmount = calculateReleasableAmount(userLock);
-        if (releasableAmount > 0) {
-            _transfer(address(this), msg.sender, releasableAmount);
-            userLock.lockedAmount -= releasableAmount;
-            if (userLock.lockedAmount == 0) {
-                delete lockInfo[msg.sender];
-            }
-        }
-    }
-
-    // 计算当前可释放的esRNT数量
-    function calculateReleasableAmount(
-        LockInfo storage lockdata
-    ) internal view returns (uint256) {
-        if (block.timestamp >= lockdata.releaseEnd) {
-            return lockdata.lockedAmount;
-        } else {
-            // 这里可以添加更复杂的线性释放逻辑
-            return
-                ((block.timestamp - lockdata.releaseEnd) *
-                    lockdata.lockedAmount) / 30 days;
-        }
+        // 记录锁定信息
+        lockInfos.push(LockInfo(to, amount, block.timestamp));
     }
 }
