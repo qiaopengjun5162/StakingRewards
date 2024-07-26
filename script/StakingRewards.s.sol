@@ -16,7 +16,7 @@ contract StakingRewardsScript is Script {
     function setUp() public {
         rnt = new RNTToken(owner.addr);
 
-        esrnt = new EsRNTToken(owner.addr);
+        esrnt = new EsRNTToken(address(rnt));
     }
 
     function run() public {

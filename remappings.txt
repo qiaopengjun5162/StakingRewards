@@ -1,5 +1,461 @@
-@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/
-ds-test/=lib/openzeppelin-contracts/lib/forge-std/lib/ds-test/src/
-erc4626-tests/=lib/openzeppelin-contracts/lib/erc4626-tests/
-forge-std/=lib/forge-std/src/
-openzeppelin-contracts/=lib/openzeppelin-contracts/
+No files changed, compilation skipped
+test/StakingRewardsTest.sol:StakingRewardsTest
+  ↪ Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 2.81ms (3.12ms CPU time)
+
+Ran 7 tests for test/StakingRewardsTest.sol:StakingRewardsTest
+[PASS] testBalance() (gas: 18511)
+Traces:
+  [18511] StakingRewardsTest::testBalance()
+    ├─ [2645] RNTToken::balanceOf(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]) [staticcall]
+    │   └─ ← [Return] 15000000000000000000000000000 [1.5e28]
+    ├─ [0] VM::assertEq(15000000000000000000000000000 [1.5e28], 15000000000000000000000000000 [1.5e28]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [2645] RNTToken::balanceOf(owner: [0x7c8999dC9a822c1f0Df42023113EDB4FDd543266]) [staticcall]
+    │   └─ ← [Return] 85000000000000000000000000000 [8.5e28]
+    ├─ [0] VM::assertEq(85000000000000000000000000000 [8.5e28], 85000000000000000000000000000 [8.5e28]) [staticcall]
+    │   └─ ← [Return] 
+    └─ ← [Stop] 
+
+[PASS] testBurnSuccess() (gas: 446108)
+Traces:
+  [450320] StakingRewardsTest::testBurnSuccess()
+    ├─ [0] VM::startPrank(owner: [0x7c8999dC9a822c1f0Df42023113EDB4FDd543266])
+    │   └─ ← [Return] 
+    ├─ [34697] RNTToken::transfer(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], 1000000000000000000000 [1e21])
+    │   ├─ emit Transfer(from: owner: [0x7c8999dC9a822c1f0Df42023113EDB4FDd543266], to: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], value: 1000000000000000000000 [1e21])
+    │   └─ ← [Return] true
+    ├─ [24740] EsRNTToken::setOnlyOwner(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0])
+    │   └─ ← [Stop] 
+    ├─ [405] EsRNTToken::stakePoolAddress() [staticcall]
+    │   └─ ← [Return] StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]
+    ├─ [0] VM::assertEq(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::stopPrank()
+    │   └─ ← [Return] 
+    ├─ [0] VM::startPrank(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6])
+    │   └─ ← [Return] 
+    ├─ [3307] SigUtils::getTypedDataHash(Permit({ owner: 0x328809Bc894f92807417D2dAD6b7C998c1aFdac6, spender: 0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0, value: 100000000000000000000 [1e20], nonce: 0, deadline: 86400 [8.64e4] })) [staticcall]
+    │   └─ ← [Return] 0x1998a83edf0db38d0e209c6888b5444961912cbcfc3e491d274a8fef630492a3
+    ├─ [0] VM::sign("<pk>", 0x1998a83edf0db38d0e209c6888b5444961912cbcfc3e491d274a8fef630492a3) [staticcall]
+    │   └─ ← [Return] 27, 0xeeea0750436f05dd3a0cacaf7e87f491af9ac3212e68a21b16bdedf8e73a8122, 0x0eba5cb0843fca453be20e07c07642fa46d374df34391525d82e16c75dc13ac3
+    ├─ [113267] StakingRewards::permitStake(100000000000000000000 [1e20], 86400 [8.64e4], 0xeeea0750436f05dd3a0cacaf7e87f491af9ac3212e68a21b16bdedf8e73a81220eba5cb0843fca453be20e07c07642fa46d374df34391525d82e16c75dc13ac31b)
+    │   ├─ [51548] RNTToken::permit(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], 100000000000000000000 [1e20], 86400 [8.64e4], 27, 0xeeea0750436f05dd3a0cacaf7e87f491af9ac3212e68a21b16bdedf8e73a8122, 0x0eba5cb0843fca453be20e07c07642fa46d374df34391525d82e16c75dc13ac3)
+    │   │   ├─ [3000] PRECOMPILES::ecrecover(0x1998a83edf0db38d0e209c6888b5444961912cbcfc3e491d274a8fef630492a3, 27, 108063950652097298988583406991833200440054355095679830086848019787079894073634, 6661653153756491306010724673183813174542318254306899499845034120138044029635) [staticcall]
+    │   │   │   └─ ← [Return] 0x000000000000000000000000328809bc894f92807417d2dad6b7c998c1afdac6
+    │   │   ├─ emit Approval(owner: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], spender: StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], value: 100000000000000000000 [1e20])
+    │   │   └─ ← [Stop] 
+    │   ├─ [11714] RNTToken::transferFrom(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], 100000000000000000000 [1e20])
+    │   │   ├─ emit Transfer(from: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], to: StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], value: 100000000000000000000 [1e20])
+    │   │   └─ ← [Return] true
+    │   ├─ emit Staked(user: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], amount: 100000000000000000000 [1e20])
+    │   └─ ← [Stop] 
+    ├─ [645] RNTToken::balanceOf(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 900000000000000000000 [9e20]
+    ├─ [0] VM::assertEq(900000000000000000000 [9e20], 900000000000000000000 [9e20]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [645] RNTToken::balanceOf(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]) [staticcall]
+    │   └─ ← [Return] 15000000100000000000000000000 [1.5e28]
+    ├─ [0] VM::assertEq(15000000100000000000000000000 [1.5e28], 15000000100000000000000000000 [1.5e28]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [2861] StakingRewards::staked(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 100000000000000000000 [1e20], 1, 0
+    ├─ [0] VM::assertEq(100000000000000000000 [1e20], 100000000000000000000 [1e20]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::assertEq(1, 1) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::warp(1728001 [1.728e6])
+    │   └─ ← [Return] 
+    ├─ [645] RNTToken::balanceOf(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]) [staticcall]
+    │   └─ ← [Return] 15000000100000000000000000000 [1.5e28]
+    ├─ [0] VM::assertEq(15000000100000000000000000000 [1.5e28], 15000000100000000000000000000 [1.5e28]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [1455] StakingRewards::getUnclaimedRewards(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 2000000000000000000000 [2e21]
+    ├─ [0] VM::assertEq(2000000000000000000000 [2e21], 2000000000000000000000 [2e21]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [245508] StakingRewards::claim()
+    │   ├─ [219867] EsRNTToken::mint(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], 2000000000000000000000 [2e21])
+    │   │   ├─ [30375] RNTToken::transferFrom(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], EsRNTToken: [0x72cC13426cAfD2375FFABE56498437927805d3d2], 2000000000000000000000 [2e21])
+    │   │   │   ├─ emit Transfer(from: StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], to: EsRNTToken: [0x72cC13426cAfD2375FFABE56498437927805d3d2], value: 2000000000000000000000 [2e21])
+    │   │   │   └─ ← [Return] true
+    │   │   ├─ emit Transfer(from: 0x0000000000000000000000000000000000000000, to: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], value: 2000000000000000000000 [2e21])
+    │   │   └─ ← [Stop] 
+    │   ├─ emit RewardClaimed(user: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], reward: 2000000000000000000000 [2e21])
+    │   └─ ← [Stop] 
+    ├─ [645] RNTToken::balanceOf(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]) [staticcall]
+    │   └─ ← [Return] 14999998100000000000000000000 [1.499e28]
+    ├─ [0] VM::assertEq(14999998100000000000000000000 [1.499e28], 14999998100000000000000000000 [1.499e28]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [861] StakingRewards::staked(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 100000000000000000000 [1e20], 1728001 [1.728e6], 0
+    ├─ [0] VM::assertEq(100000000000000000000 [1e20], 100000000000000000000 [1e20]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::assertEq(0, 0) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::assertEq(1728001 [1.728e6], 1728001 [1.728e6]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [946] EsRNTToken::lockInfos(0) [staticcall]
+    │   └─ ← [Return] alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], 2000000000000000000000 [2e21], 1728001 [1.728e6]
+    ├─ [0] VM::assertEq(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::assertEq(1728001 [1.728e6], 1728001 [1.728e6]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [372] EsRNTToken::totalSupply() [staticcall]
+    │   └─ ← [Return] 2000000000000000000000 [2e21]
+    ├─ [0] VM::assertEq(2000000000000000000000 [2e21], 2000000000000000000000 [2e21]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [645] RNTToken::balanceOf(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]) [staticcall]
+    │   └─ ← [Return] 14999998100000000000000000000 [1.499e28]
+    ├─ [0] VM::assertEq(14999998100000000000000000000 [1.499e28], 14999998100000000000000000000 [1.499e28]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [2667] EsRNTToken::balanceOf(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]) [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::assertEq(0, 0) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [425] EsRNTToken::size() [staticcall]
+    │   └─ ← [Return] 1
+    ├─ [0] VM::assertEq(1, 1) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [645] RNTToken::balanceOf(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 900000000000000000000 [9e20]
+    ├─ [0] VM::assertEq(900000000000000000000 [9e20], 900000000000000000000 [9e20]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [667] EsRNTToken::balanceOf(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 2000000000000000000000 [2e21]
+    ├─ [0] VM::assertEq(2000000000000000000000 [2e21], 2000000000000000000000 [2e21]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::assertEq(2000000000000000000000 [2e21], 2000000000000000000000 [2e21]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [645] RNTToken::balanceOf(EsRNTToken: [0x72cC13426cAfD2375FFABE56498437927805d3d2]) [staticcall]
+    │   └─ ← [Return] 2000000000000000000000 [2e21]
+    ├─ [0] VM::assertEq(2000000000000000000000 [2e21], 2000000000000000000000 [2e21]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [24779] RNTToken::approve(EsRNTToken: [0x72cC13426cAfD2375FFABE56498437927805d3d2], 2000000000000000000000 [2e21])
+    │   ├─ emit Approval(owner: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], spender: EsRNTToken: [0x72cC13426cAfD2375FFABE56498437927805d3d2], value: 2000000000000000000000 [2e21])
+    │   └─ ← [Return] true
+    ├─ [0] VM::warp(3456001 [3.456e6])
+    │   └─ ← [Return] 
+    ├─ [34600] EsRNTToken::burn(0)
+    │   ├─ [3997] RNTToken::transfer(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], 1333333333333333333333 [1.333e21])
+    │   │   ├─ emit Transfer(from: EsRNTToken: [0x72cC13426cAfD2375FFABE56498437927805d3d2], to: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], value: 1333333333333333333333 [1.333e21])
+    │   │   └─ ← [Return] true
+    │   ├─ [19334] RNTToken::burn(666666666666666666667 [6.666e20])
+    │   │   ├─ emit Transfer(from: EsRNTToken: [0x72cC13426cAfD2375FFABE56498437927805d3d2], to: 0x0000000000000000000000000000000000000000, value: 666666666666666666667 [6.666e20])
+    │   │   └─ ← [Stop] 
+    │   ├─ emit Transfer(from: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], to: 0x0000000000000000000000000000000000000000, value: 2000000000000000000000 [2e21])
+    │   ├─ emit TokensBurned(user: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], amount: 666666666666666666667 [6.666e20])
+    │   └─ ← [Stop] 
+    ├─ [645] RNTToken::balanceOf(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 2233333333333333333333 [2.233e21]
+    ├─ [0] VM::assertEq(2233333333333333333333 [2.233e21], 2233333333333333333333 [2.233e21]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [667] EsRNTToken::balanceOf(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::assertEq(0, 0) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [645] RNTToken::balanceOf(EsRNTToken: [0x72cC13426cAfD2375FFABE56498437927805d3d2]) [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::assertEq(0, 0) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [372] EsRNTToken::totalSupply() [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::assertEq(0, 0) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [645] RNTToken::balanceOf(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]) [staticcall]
+    │   └─ ← [Return] 14999998100000000000000000000 [1.499e28]
+    ├─ [0] VM::assertEq(14999998100000000000000000000 [1.499e28], 14999998100000000000000000000 [1.499e28]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [2667] EsRNTToken::balanceOf(EsRNTToken: [0x72cC13426cAfD2375FFABE56498437927805d3d2]) [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::assertEq(0, 0) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [425] EsRNTToken::size() [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::assertEq(0, 0) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::stopPrank()
+    │   └─ ← [Return] 
+    └─ ← [Stop] 
+
+[PASS] testClaimSuccess() (gas: 438731)
+Traces:
+  [438731] StakingRewardsTest::testClaimSuccess()
+    ├─ [0] VM::startPrank(owner: [0x7c8999dC9a822c1f0Df42023113EDB4FDd543266])
+    │   └─ ← [Return] 
+    ├─ [34697] RNTToken::transfer(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], 1000000000000000000000 [1e21])
+    │   ├─ emit Transfer(from: owner: [0x7c8999dC9a822c1f0Df42023113EDB4FDd543266], to: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], value: 1000000000000000000000 [1e21])
+    │   └─ ← [Return] true
+    ├─ [24740] EsRNTToken::setOnlyOwner(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0])
+    │   └─ ← [Stop] 
+    ├─ [405] EsRNTToken::stakePoolAddress() [staticcall]
+    │   └─ ← [Return] StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]
+    ├─ [0] VM::assertEq(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::stopPrank()
+    │   └─ ← [Return] 
+    ├─ [0] VM::startPrank(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6])
+    │   └─ ← [Return] 
+    ├─ [3307] SigUtils::getTypedDataHash(Permit({ owner: 0x328809Bc894f92807417D2dAD6b7C998c1aFdac6, spender: 0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0, value: 100000000000000000000 [1e20], nonce: 0, deadline: 86400 [8.64e4] })) [staticcall]
+    │   └─ ← [Return] 0x1998a83edf0db38d0e209c6888b5444961912cbcfc3e491d274a8fef630492a3
+    ├─ [0] VM::sign("<pk>", 0x1998a83edf0db38d0e209c6888b5444961912cbcfc3e491d274a8fef630492a3) [staticcall]
+    │   └─ ← [Return] 27, 0xeeea0750436f05dd3a0cacaf7e87f491af9ac3212e68a21b16bdedf8e73a8122, 0x0eba5cb0843fca453be20e07c07642fa46d374df34391525d82e16c75dc13ac3
+    ├─ [113267] StakingRewards::permitStake(100000000000000000000 [1e20], 86400 [8.64e4], 0xeeea0750436f05dd3a0cacaf7e87f491af9ac3212e68a21b16bdedf8e73a81220eba5cb0843fca453be20e07c07642fa46d374df34391525d82e16c75dc13ac31b)
+    │   ├─ [51548] RNTToken::permit(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], 100000000000000000000 [1e20], 86400 [8.64e4], 27, 0xeeea0750436f05dd3a0cacaf7e87f491af9ac3212e68a21b16bdedf8e73a8122, 0x0eba5cb0843fca453be20e07c07642fa46d374df34391525d82e16c75dc13ac3)
+    │   │   ├─ [3000] PRECOMPILES::ecrecover(0x1998a83edf0db38d0e209c6888b5444961912cbcfc3e491d274a8fef630492a3, 27, 108063950652097298988583406991833200440054355095679830086848019787079894073634, 6661653153756491306010724673183813174542318254306899499845034120138044029635) [staticcall]
+    │   │   │   └─ ← [Return] 0x000000000000000000000000328809bc894f92807417d2dad6b7c998c1afdac6
+    │   │   ├─ emit Approval(owner: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], spender: StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], value: 100000000000000000000 [1e20])
+    │   │   └─ ← [Stop] 
+    │   ├─ [11714] RNTToken::transferFrom(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], 100000000000000000000 [1e20])
+    │   │   ├─ emit Transfer(from: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], to: StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], value: 100000000000000000000 [1e20])
+    │   │   └─ ← [Return] true
+    │   ├─ emit Staked(user: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], amount: 100000000000000000000 [1e20])
+    │   └─ ← [Stop] 
+    ├─ [645] RNTToken::balanceOf(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 900000000000000000000 [9e20]
+    ├─ [0] VM::assertEq(900000000000000000000 [9e20], 900000000000000000000 [9e20]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [645] RNTToken::balanceOf(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]) [staticcall]
+    │   └─ ← [Return] 15000000100000000000000000000 [1.5e28]
+    ├─ [0] VM::assertEq(15000000100000000000000000000 [1.5e28], 15000000100000000000000000000 [1.5e28]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [2861] StakingRewards::staked(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 100000000000000000000 [1e20], 1, 0
+    ├─ [0] VM::assertEq(100000000000000000000 [1e20], 100000000000000000000 [1e20]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::assertEq(1, 1) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::warp(1728001 [1.728e6])
+    │   └─ ← [Return] 
+    ├─ [645] RNTToken::balanceOf(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]) [staticcall]
+    │   └─ ← [Return] 15000000100000000000000000000 [1.5e28]
+    ├─ [0] VM::assertEq(15000000100000000000000000000 [1.5e28], 15000000100000000000000000000 [1.5e28]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [245508] StakingRewards::claim()
+    │   ├─ [219867] EsRNTToken::mint(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], 2000000000000000000000 [2e21])
+    │   │   ├─ [30375] RNTToken::transferFrom(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], EsRNTToken: [0x72cC13426cAfD2375FFABE56498437927805d3d2], 2000000000000000000000 [2e21])
+    │   │   │   ├─ emit Transfer(from: StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], to: EsRNTToken: [0x72cC13426cAfD2375FFABE56498437927805d3d2], value: 2000000000000000000000 [2e21])
+    │   │   │   └─ ← [Return] true
+    │   │   ├─ emit Transfer(from: 0x0000000000000000000000000000000000000000, to: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], value: 2000000000000000000000 [2e21])
+    │   │   └─ ← [Stop] 
+    │   ├─ emit RewardClaimed(user: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], reward: 2000000000000000000000 [2e21])
+    │   └─ ← [Stop] 
+    ├─ [645] RNTToken::balanceOf(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]) [staticcall]
+    │   └─ ← [Return] 14999998100000000000000000000 [1.499e28]
+    ├─ [0] VM::assertEq(14999998100000000000000000000 [1.499e28], 14999998100000000000000000000 [1.499e28]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [861] StakingRewards::staked(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 100000000000000000000 [1e20], 1728001 [1.728e6], 0
+    ├─ [0] VM::assertEq(100000000000000000000 [1e20], 100000000000000000000 [1e20]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::assertEq(0, 0) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::assertEq(1728001 [1.728e6], 1728001 [1.728e6]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [645] RNTToken::balanceOf(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 900000000000000000000 [9e20]
+    ├─ [0] VM::assertEq(900000000000000000000 [9e20], 900000000000000000000 [9e20]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [667] EsRNTToken::balanceOf(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 2000000000000000000000 [2e21]
+    ├─ [0] VM::assertEq(2000000000000000000000 [2e21], 2000000000000000000000 [2e21]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [946] EsRNTToken::lockInfos(0) [staticcall]
+    │   └─ ← [Return] alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], 2000000000000000000000 [2e21], 1728001 [1.728e6]
+    ├─ [0] VM::assertEq(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::assertEq(2000000000000000000000 [2e21], 2000000000000000000000 [2e21]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::assertEq(1728001 [1.728e6], 1728001 [1.728e6]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [645] RNTToken::balanceOf(EsRNTToken: [0x72cC13426cAfD2375FFABE56498437927805d3d2]) [staticcall]
+    │   └─ ← [Return] 2000000000000000000000 [2e21]
+    ├─ [0] VM::assertEq(2000000000000000000000 [2e21], 2000000000000000000000 [2e21]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::stopPrank()
+    │   └─ ← [Return] 
+    └─ ← [Stop] 
+
+[PASS] testPermitStakeSuccess() (gas: 149844)
+Traces:
+  [151716] StakingRewardsTest::testPermitStakeSuccess()
+    ├─ [0] VM::prank(owner: [0x7c8999dC9a822c1f0Df42023113EDB4FDd543266])
+    │   └─ ← [Return] 
+    ├─ [34697] RNTToken::transfer(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], 1000000000000000000 [1e18])
+    │   ├─ emit Transfer(from: owner: [0x7c8999dC9a822c1f0Df42023113EDB4FDd543266], to: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], value: 1000000000000000000 [1e18])
+    │   └─ ← [Return] true
+    ├─ [645] RNTToken::balanceOf(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 1000000000000000000 [1e18]
+    ├─ [0] VM::assertEq(1000000000000000000 [1e18], 1000000000000000000 [1e18]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::startPrank(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6])
+    │   └─ ← [Return] 
+    ├─ [3307] SigUtils::getTypedDataHash(Permit({ owner: 0x328809Bc894f92807417D2dAD6b7C998c1aFdac6, spender: 0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0, value: 1000000000000000000 [1e18], nonce: 0, deadline: 86400 [8.64e4] })) [staticcall]
+    │   └─ ← [Return] 0x295cdb57b05b9696df001003dbfe8df525486aeab550ceb503866229afb1e420
+    ├─ [0] VM::sign("<pk>", 0x295cdb57b05b9696df001003dbfe8df525486aeab550ceb503866229afb1e420) [staticcall]
+    │   └─ ← [Return] 27, 0xb441e45e0f594e2e27e380623b78cdecaff03a3dceaad2a539f970456dac08b7, 0x4272e61923ddcc2eb79c2fbbee107a7a4f857425b9b727e5b607bb357e3725d8
+    ├─ [113267] StakingRewards::permitStake(1000000000000000000 [1e18], 86400 [8.64e4], 0xb441e45e0f594e2e27e380623b78cdecaff03a3dceaad2a539f970456dac08b74272e61923ddcc2eb79c2fbbee107a7a4f857425b9b727e5b607bb357e3725d81b)
+    │   ├─ [51548] RNTToken::permit(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], 1000000000000000000 [1e18], 86400 [8.64e4], 27, 0xb441e45e0f594e2e27e380623b78cdecaff03a3dceaad2a539f970456dac08b7, 0x4272e61923ddcc2eb79c2fbbee107a7a4f857425b9b727e5b607bb357e3725d8)
+    │   │   ├─ [3000] PRECOMPILES::ecrecover(0x295cdb57b05b9696df001003dbfe8df525486aeab550ceb503866229afb1e420, 27, 81532733938217022331645893190792204590274584526196635257460775852241089988791, 30055656651315918398450308812846842383191517681707436076586165580442749052376) [staticcall]
+    │   │   │   └─ ← [Return] 0x000000000000000000000000328809bc894f92807417d2dad6b7c998c1afdac6
+    │   │   ├─ emit Approval(owner: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], spender: StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], value: 1000000000000000000 [1e18])
+    │   │   └─ ← [Stop] 
+    │   ├─ [11714] RNTToken::transferFrom(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], 1000000000000000000 [1e18])
+    │   │   ├─ emit Transfer(from: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], to: StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], value: 1000000000000000000 [1e18])
+    │   │   └─ ← [Return] true
+    │   ├─ emit Staked(user: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], amount: 1000000000000000000 [1e18])
+    │   └─ ← [Stop] 
+    ├─ [785] RNTToken::allowance(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]) [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::assertEq(0, 0) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [645] RNTToken::balanceOf(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::assertEq(0, 0) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [645] RNTToken::balanceOf(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]) [staticcall]
+    │   └─ ← [Return] 15000000001000000000000000000 [1.5e28]
+    ├─ [0] VM::assertEq(15000000001000000000000000000 [1.5e28], 15000000001000000000000000000 [1.5e28]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [2861] StakingRewards::staked(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 1000000000000000000 [1e18], 1, 0
+    ├─ [0] VM::assertEq(1000000000000000000 [1e18], 1000000000000000000 [1e18]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::assertEq(1, 1) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::stopPrank()
+    │   └─ ← [Return] 
+    └─ ← [Stop] 
+
+[PASS] testStakeSuccessful() (gas: 152004)
+Traces:
+  [152004] StakingRewardsTest::testStakeSuccessful()
+    ├─ [0] VM::prank(owner: [0x7c8999dC9a822c1f0Df42023113EDB4FDd543266])
+    │   └─ ← [Return] 
+    ├─ [34697] RNTToken::transfer(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], 1000000000000000000000 [1e21])
+    │   ├─ emit Transfer(from: owner: [0x7c8999dC9a822c1f0Df42023113EDB4FDd543266], to: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], value: 1000000000000000000000 [1e21])
+    │   └─ ← [Return] true
+    ├─ [645] RNTToken::balanceOf(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 1000000000000000000000 [1e21]
+    ├─ [0] VM::assertEq(1000000000000000000000 [1e21], 1000000000000000000000 [1e21]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [645] RNTToken::balanceOf(owner: [0x7c8999dC9a822c1f0Df42023113EDB4FDd543266]) [staticcall]
+    │   └─ ← [Return] 84999999000000000000000000000 [8.499e28]
+    ├─ [0] VM::assertEq(84999999000000000000000000000 [8.499e28], 84999999000000000000000000000 [8.499e28]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::startPrank(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6])
+    │   └─ ← [Return] 
+    ├─ [24779] RNTToken::approve(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], 1000000000000000000000 [1e21])
+    │   ├─ emit Approval(owner: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], spender: StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], value: 1000000000000000000000 [1e21])
+    │   └─ ← [Return] true
+    ├─ [785] RNTToken::allowance(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]) [staticcall]
+    │   └─ ← [Return] 1000000000000000000000 [1e21]
+    ├─ [0] VM::assertEq(1000000000000000000000 [1e21], 1000000000000000000000 [1e21]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [60519] StakingRewards::stake(100000000000000000000 [1e20])
+    │   ├─ [11714] RNTToken::transferFrom(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], 100000000000000000000 [1e20])
+    │   │   ├─ emit Transfer(from: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], to: StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], value: 100000000000000000000 [1e20])
+    │   │   └─ ← [Return] true
+    │   ├─ emit Staked(user: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], amount: 100000000000000000000 [1e20])
+    │   └─ ← [Stop] 
+    ├─ [645] RNTToken::balanceOf(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 900000000000000000000 [9e20]
+    ├─ [0] VM::assertEq(900000000000000000000 [9e20], 900000000000000000000 [9e20]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [645] RNTToken::balanceOf(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]) [staticcall]
+    │   └─ ← [Return] 15000000100000000000000000000 [1.5e28]
+    ├─ [0] VM::assertEq(15000000100000000000000000000 [1.5e28], 15000000100000000000000000000 [1.5e28]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [2861] StakingRewards::staked(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 100000000000000000000 [1e20], 1, 0
+    ├─ [0] VM::assertEq(1, 1) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::assertEq(100000000000000000000 [1e20], 100000000000000000000 [1e20]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::stopPrank()
+    │   └─ ← [Return] 
+    └─ ← [Stop] 
+
+[PASS] testUnstakeSuccess() (gas: 138845)
+Traces:
+  [142916] StakingRewardsTest::testUnstakeSuccess()
+    ├─ [0] VM::prank(owner: [0x7c8999dC9a822c1f0Df42023113EDB4FDd543266])
+    │   └─ ← [Return] 
+    ├─ [34697] RNTToken::transfer(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], 1000000000000000000000 [1e21])
+    │   ├─ emit Transfer(from: owner: [0x7c8999dC9a822c1f0Df42023113EDB4FDd543266], to: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], value: 1000000000000000000000 [1e21])
+    │   └─ ← [Return] true
+    ├─ [0] VM::startPrank(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6])
+    │   └─ ← [Return] 
+    ├─ [24779] RNTToken::approve(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], 1000000000000000000000 [1e21])
+    │   ├─ emit Approval(owner: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], spender: StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], value: 1000000000000000000000 [1e21])
+    │   └─ ← [Return] true
+    ├─ [60519] StakingRewards::stake(1000000000000000000000 [1e21])
+    │   ├─ [11714] RNTToken::transferFrom(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], 1000000000000000000000 [1e21])
+    │   │   ├─ emit Transfer(from: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], to: StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], value: 1000000000000000000000 [1e21])
+    │   │   └─ ← [Return] true
+    │   ├─ emit Staked(user: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], amount: 1000000000000000000000 [1e21])
+    │   └─ ← [Stop] 
+    ├─ [645] RNTToken::balanceOf(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]) [staticcall]
+    │   └─ ← [Return] 15000001000000000000000000000 [1.5e28]
+    ├─ [0] VM::assertEq(15000001000000000000000000000 [1.5e28], 15000001000000000000000000000 [1.5e28]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [2861] StakingRewards::staked(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 1000000000000000000000 [1e21], 1, 0
+    ├─ [0] VM::assertEq(1000000000000000000000 [1e21], 1000000000000000000000 [1e21]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::assertEq(1, 1) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [29108] StakingRewards::unstake(100000000000000000000 [1e20])
+    │   ├─ [645] RNTToken::balanceOf(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]) [staticcall]
+    │   │   └─ ← [Return] 15000001000000000000000000000 [1.5e28]
+    │   ├─ [23897] RNTToken::transfer(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], 100000000000000000000 [1e20])
+    │   │   ├─ emit Transfer(from: StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], to: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], value: 100000000000000000000 [1e20])
+    │   │   └─ ← [Return] true
+    │   ├─ emit Unstaked(user: alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6], amount: 100000000000000000000 [1e20])
+    │   └─ ← [Stop] 
+    ├─ [645] RNTToken::balanceOf(StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]) [staticcall]
+    │   └─ ← [Return] 15000000900000000000000000000 [1.5e28]
+    ├─ [0] VM::assertEq(15000000900000000000000000000 [1.5e28], 15000000900000000000000000000 [1.5e28]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [861] StakingRewards::staked(alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Return] 900000000000000000000 [9e20], 1, 0
+    ├─ [0] VM::assertEq(900000000000000000000 [9e20], 900000000000000000000 [9e20]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::assertEq(1, 1) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] VM::stopPrank()
+    │   └─ ← [Return] 
+    └─ ← [Stop] 
+
+[PASS] test_Permit() (gas: 84810)
+Logs:
+  owner address:  0x7c8999dC9a822c1f0Df42023113EDB4FDd543266
+  alice address:  0x328809Bc894f92807417D2dAD6b7C998c1aFdac6
+
+Traces:
+  [84810] StakingRewardsTest::test_Permit()
+    ├─ [0] console::log("owner address: ", owner: [0x7c8999dC9a822c1f0Df42023113EDB4FDd543266]) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] console::log("alice address: ", alice: [0x328809Bc894f92807417D2dAD6b7C998c1aFdac6]) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [3307] SigUtils::getTypedDataHash(Permit({ owner: 0x7c8999dC9a822c1f0Df42023113EDB4FDd543266, spender: 0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0, value: 1000000000000000000 [1e18], nonce: 0, deadline: 86400 [8.64e4] })) [staticcall]
+    │   └─ ← [Return] 0x0ebc95723c230c4389d12a25dfb035b6ac810118e634082f99910ef8e3ecedcc
+    ├─ [0] VM::sign("<pk>", 0x0ebc95723c230c4389d12a25dfb035b6ac810118e634082f99910ef8e3ecedcc) [staticcall]
+    │   └─ ← [Return] 28, 0x873fd0776cf4222c1e4104f90b15df795daf99c8a219d606c4204d0af527db45, 0x16f2d9493b883c4ca5b45a4749fd17d0718a247b4f151e3660d1f3f7968c708d
+    ├─ [51548] RNTToken::permit(owner: [0x7c8999dC9a822c1f0Df42023113EDB4FDd543266], StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], 1000000000000000000 [1e18], 86400 [8.64e4], 28, 0x873fd0776cf4222c1e4104f90b15df795daf99c8a219d606c4204d0af527db45, 0x16f2d9493b883c4ca5b45a4749fd17d0718a247b4f151e3660d1f3f7968c708d)
+    │   ├─ [3000] PRECOMPILES::ecrecover(0x0ebc95723c230c4389d12a25dfb035b6ac810118e634082f99910ef8e3ecedcc, 28, 61174984706769944662385007740751404224788607010525920298226778738031700990789, 10379959311811059067110112901400250663253411018412497491450754777864114827405) [staticcall]
+    │   │   └─ ← [Return] 0x0000000000000000000000007c8999dc9a822c1f0df42023113edb4fdd543266
+    │   ├─ emit Approval(owner: owner: [0x7c8999dC9a822c1f0Df42023113EDB4FDd543266], spender: StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0], value: 1000000000000000000 [1e18])
+    │   └─ ← [Stop] 
+    ├─ [785] RNTToken::allowance(owner: [0x7c8999dC9a822c1f0Df42023113EDB4FDd543266], StakingRewards: [0x98B3c60ADE6A87b229Aa7d91ad27c227d54d95C0]) [staticcall]
+    │   └─ ← [Return] 1000000000000000000 [1e18]
+    ├─ [0] VM::assertEq(1000000000000000000 [1e18], 1000000000000000000 [1e18]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [695] RNTToken::nonces(owner: [0x7c8999dC9a822c1f0Df42023113EDB4FDd543266]) [staticcall]
+    │   └─ ← [Return] 1
+    ├─ [0] VM::assertEq(1, 1) [staticcall]
+    │   └─ ← [Return] 
+    └─ ← [Stop] 
+
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 2.81ms (3.12ms CPU time)
+
+Ran 1 test suite in 183.03ms (2.81ms CPU time): 7 tests passed, 0 failed, 0 skipped (7 total tests)

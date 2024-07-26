@@ -35,9 +35,6 @@ contract StakingRewards is Ownable(msg.sender), EIP712Verifier {
 
     mapping(address => StakeInfo) public staked;
 
-    // 用户领取奖励
-    mapping(address => uint256) public claimed;
-
     constructor(
         address _erc20,
         address _esRntToken
@@ -46,6 +43,7 @@ contract StakingRewards is Ownable(msg.sender), EIP712Verifier {
         require(_esRntToken != address(0), "zero address");
         rntToken = IERC20(_erc20);
         esRntToken = EsRNTToken(_esRntToken);
+        rntToken.approve(address(esRntToken), type(uint256).max);
     }
 
     /**
@@ -134,6 +132,8 @@ contract StakingRewards is Ownable(msg.sender), EIP712Verifier {
         require(rewards > 0, "No rewards to claim");
 
         stakeInfo.unClaimed = 0;
+        // rntToken.approve(address(esRntToken), rewards);
+
         esRntToken.mint(msg.sender, rewards);
         emit RewardClaimed(msg.sender, rewards);
     }
